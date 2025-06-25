@@ -1,17 +1,25 @@
 import os
+import requests
+import joblib
+import io
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import joblib
 
 app = Flask(__name__)
 CORS(app)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# GitHub raw URLs for the model and scaler
+MODEL_URL = "https://raw.githubusercontent.com/Ismail-Hossain-1/Personality-Test/main/svm_model.pkl"
+SCALER_URL = "https://raw.githubusercontent.com/Ismail-Hossain-1/Personality-Test/main/scaler.pkl"
 
-# Load your model and scaler once at startup
-model = joblib.load(os.path.join(BASE_DIR, 'svm_model.pkl'))
-scaler = joblib.load(os.path.join(BASE_DIR, 'scaler.pkl'))
+def load_pickle_from_url(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return joblib.load(io.BytesIO(response.content))
 
+# Load the model and scaler from GitHub at startup
+model = load_pickle_from_url(MODEL_URL)
+scaler = load_pickle_from_url(SCALER_URL)
 
 @app.route("/", methods=['GET'])
 def home():
