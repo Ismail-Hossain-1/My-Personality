@@ -12,6 +12,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 model = joblib.load(os.path.join(BASE_DIR, 'svm_model.pkl'))
 scaler = joblib.load(os.path.join(BASE_DIR, 'scaler.pkl'))
 
+
+@app.route("/", methods=['GET'])
+def home():
+    return "Backend Running"
+
 @app.route('/personalitytest', methods=['POST', 'OPTIONS'])
 def test():
     if request.method == 'OPTIONS':
